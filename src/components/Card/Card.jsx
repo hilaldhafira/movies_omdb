@@ -1,7 +1,10 @@
 import React from 'react';
 import shoppingCartIcon from "../../assets/shopping-cart.png"
+import { showModalsConfirmation } from '../../store/pageSlice';
+import { useDispatch } from "react-redux"
 
 const Card = ({data, goDetail=()=>{}},...props) => {
+    let dispatch = useDispatch();
     return (
         <div className="w-72 bg-neutral-400 border-neutral-400 rounded justify-between items-center gap-4 h-70 p-4 flex flex-col">
           <img width={160} onClick={()=>goDetail(data)} className='cursor-pointer' height={234} src={data?.Poster} />
@@ -21,7 +24,7 @@ const Card = ({data, goDetail=()=>{}},...props) => {
           </div>
           
           {/* Price */}
-          <div className="flex gap-3 bg-white p-5 hover:bg-white hover:opacity-80 cursor-pointer rounded-sm">
+          <div onClick={()=>dispatch(showModalsConfirmation({show:true,data:data}))} className="flex gap-3 bg-white p-5 hover:bg-white hover:opacity-80 cursor-pointer rounded-sm">
             <div className="text-md text-left text-slate-900">
               ${data?.Price}
             </div>

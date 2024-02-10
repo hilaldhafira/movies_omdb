@@ -1,9 +1,14 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import shoppingCartIcon from "../../assets/shopping-cart.png";
+import { ROUTES } from "../../constant/routesConstant";
+import { useDispatch } from "react-redux"
+import { showModalsCart, showModalsConfirmation } from "../../store/pageSlice";
 
 const DetailMovie = () => {
   let location = useLocation();
+  let navigate = useNavigate()
+  let dispatch = useDispatch();
   let { state: data } = location;
   return (
     <>
@@ -14,9 +19,12 @@ const DetailMovie = () => {
           <div>
             {data?.Title} ({data?.Year})
           </div>
-          <div className="cursor-pointer">
+          <div onClick={()=>dispatch(showModalsCart(true))} className="cursor-pointer">
             <img width={40} height={40} src={shoppingCartIcon} />
           </div>
+        </div>
+        <div className="px-4 cursor-pointer hover:text-blue-600" onClick={()=>(navigate(ROUTES.HOME))}>
+            {'<'} Back To List
         </div>
         {/* Image */}
         <div className="flex gap-4 p-4">
@@ -32,7 +40,7 @@ const DetailMovie = () => {
             </div>
             {/* Buy now */}
             <div className="cursor-pointer">
-              <div className="bg-red-500 w-fit p-4 text-white rounded hover:opacity-80">
+              <div onClick={()=>dispatch(showModalsConfirmation({show: true, data:data}))} className="bg-red-500 w-fit p-4 text-white rounded hover:opacity-80">
                 ${data?.Price} <br /> Add to Cart{" "}
               </div>
             </div>

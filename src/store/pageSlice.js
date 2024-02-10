@@ -1,29 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  loading: {
-    get: false,
-    post: false,
-    put: false,
-    delete: false,
-  },
+  modals: {
+    confirmation: {
+        show: false,
+        data: {}
+    },
+    cart: false,
+    data: [],
+},
+priceAwal : []
 };
 const pageSlice = createSlice({
   name: "page",
   initialState,
   reducers: {
-    getFetchingAction(state, data) {
-      state.loading.get = true;
+    showModalsConfirmation(state,data) {
+        state.modals.confirmation = data.payload;;
     },
-    getFetchingSuccess(state) {
-      state.loading.get = false;
+    showModalsCart(state,data) {
+        state.modals.cart = data.payload
     },
-    getFetchingFailed(state) {
-      state.loading.get = false;
+    setDataCart(state,data) {
+        state.modals.data = data.payload
+    },
+    setPrice(state,data) {
+        state.priceAwal = data.payload
     },
   },
 });
 
-export const { getFetchingAction, getFetchingSuccess, getFetchingFailed } =
+export const { showModalsConfirmation, showModalsCart, setDataCart, setPrice } =
   pageSlice.actions;
 export default pageSlice.reducer;

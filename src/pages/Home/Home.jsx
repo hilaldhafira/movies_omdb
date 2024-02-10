@@ -6,9 +6,16 @@ import shoppingCartIcon from "../../assets/shopping-cart.png";
 import Card from "../../components/Card/Card";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../constant/routesConstant";
+import Navbar from "../../components/Navbar/Navbar";
+import { useSelector, useDispatch } from "react-redux"
+import { setPrice } from "../../store/pageSlice";
+import _ from "lodash";
 
 const Home = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   let navigate = useNavigate();
+  let dispatch = useDispatch();
+  let {priceAwal} = useSelector((state) => state?.page) 
   const queryClient = useQueryClient();
   let dataDummy = {
     Title: "Pulp Fiction",
@@ -62,9 +69,12 @@ const Home = () => {
       if (response !== undefined) {
         allMoviesData.push({
           ...response,
-          Price: priceMovies[index % priceMovies?.length],
+          Price:  priceAwal?.length !== 0 ? priceAwal[index] : Math.floor(Math.random() * (1000000 - 100000 + 1)) + 100000
         });
       }
+    }
+    if (priceAwal.length === 0) {
+        dispatch(setPrice(_.map(allMoviesData, (el) => el.Price)))
     }
     queryClient.setQueryData("cachedData", allMoviesData);
   };
@@ -76,23 +86,51 @@ const Home = () => {
   const { data, isLoading, isError, isRefetchError } = useQuery("cachedData");
 
   const handleDetail = (value) => {
-    console.log(value);
-    navigate(ROUTES.DETAIL_MOVIE, {state:value});
+    navigate(ROUTES.DETAIL_MOVIE, { state: value });
+  };
+
+  const getPageList = (data) => {
+    const startIndex = (currentPage - 1) * 12;
+    const endIndex = startIndex + 12;
+    return data?.slice(startIndex, endIndex);
+  };
+
+  const handlePage = (page) => {
+    setCurrentPage(page);
   };
 
   return (
     <>
+          <Navbar />
       {isLoading ? (
         <p>Loading</p>
       ) : (
         <>
-          <div className="flex gap-2">
-            {data?.map((value, i) => {
+
+          <div className="flex-wrap justify-center flex gap-2">
+            {getPageList(data)?.map((value, i) => {
               // if (i === 0) {
 
               // }
               return <Card goDetail={(id) => handleDetail(id)} data={value} />;
             })}
+          </div>
+          {/* Pagination */}
+          <div className="flex justify-center py-4 gap-4">
+            <button
+              className="bg-indigo-700 p-4 rounded text-white disabled:text-gray-400 disabled:cursor-not-allowed"
+              disabled={currentPage === 1}
+              onClick={() => handlePage(currentPage - 1)}
+            >
+              Prev Page
+            </button>
+            <button
+              className="bg-indigo-700 p-4 rounded text-white disabled:text-gray-400 disabled:cursor-not-allowed"
+              onClick={() => handlePage(currentPage + 1)}
+              disabled={currentPage === Math.ceil(data?.length / 12)}
+            >
+              Next Page
+            </button>
           </div>
         </>
       )}

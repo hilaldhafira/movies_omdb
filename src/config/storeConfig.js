@@ -8,6 +8,7 @@ const rootReducer = combineReducers(Reducers);
 const persistConfig = {
   key: "root",
   storage,
+  blacklist : ['page']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
